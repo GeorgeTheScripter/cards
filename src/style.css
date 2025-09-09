@@ -2,6 +2,7 @@
 
 :root {
   --color-bg-primary: #f0f4f8;
+  --color-bg-card: #fff;
   --color-bg-accent: #008bfe;
   --color-bg-accent-hover: #0070cc;
   --color-bg-accent-light: #cce8ff;
@@ -17,6 +18,7 @@
   padding: 0;
   margin: 0;
   transition: all 0.2s ease-in-out;
+  text-decoration: none;
 }
 
 body {
@@ -28,4 +30,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--color-bg-primary);
+}
+
+.container {
+  max-width: 1312px;
+  margin: 0 auto;
 }
