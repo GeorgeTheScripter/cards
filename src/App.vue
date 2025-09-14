@@ -9,7 +9,7 @@ const score = ref(0);
 const cards = ref([
   {
     id: 1,
-    word: "hello",
+    word: "Hello",
     translation: "Привет",
     state: "closed",
     status: "pending",
@@ -18,6 +18,13 @@ const cards = ref([
     id: 2,
     word: "Bye",
     translation: "Пока",
+    state: "closed",
+    status: "pending",
+  },
+  {
+    id: 3,
+    word: "Bear",
+    translation: "Медведь",
     state: "closed",
     status: "pending",
   },
