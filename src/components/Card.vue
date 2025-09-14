@@ -5,38 +5,71 @@ import CorrectIcon from "./icons/CorrectIcon.vue";
 
 const props = defineProps({
   cardNumber: String,
+  id: Number,
   word: String,
   translate: String,
-  isFlipped: Boolean,
+  status: "success" | "fail" | "pending",
+  state: "closed" | "opened",
 });
 
 const emit = defineEmits(["flip", "changeStatus"]);
 
 const cardWord = computed(() => {
-  return props.isFlipped ? props.translate : props.word;
+  return props.state === "opened" ? props.translate : props.word;
 });
 
 const flipCard = () => {
-  emit("flip");
+  console.log("flip");
+  emit("flip", props.id);
 };
 
 const statusChange = (status) => {
-  emit("changeStatus", status);
+  emit("changeStatus", props.id, status);
 };
+
+const isFlipped = computed(() => {
+  return props.state === "opened" && props.status === "pending";
+});
+
+const isDone = computed(() => {
+  return props.status !== "pending";
+});
+
+const completedText = computed(() => {
+  if (props.status === "success") {
+    return "УСПЕХ";
+  } else if (props.status === "fail") {
+    return "НЕУДАЧА";
+  }
+
+  return "";
+});
 </script>
 
 <template>
   <div class="card">
     <div class="card__container">
+      <WrongIcon v-if="props.status === 'fail'" class="wr-ico" />
+      <CorrectIcon v-if="props.status === 'success'" class="wr-ico" />
+
       <p class="card__number">{{ cardNumber }}</p>
       <p class="card__word">{{ cardWord }}</p>
-      <p class="card__action" @click="flipCard">ПЕРЕВЕНУТЬ</p>
+      <div>
+        <p
+          class="card__action"
+          v-if="props.status === 'pending'"
+          @click="flipCard"
+        >
+          ПЕРЕВЕНУТЬ
+        </p>
+        <p class="card__action" v-if="isDone">{{ completedText }}</p>
+      </div>
 
       <div v-if="isFlipped" class="card__buttons">
-        <button class="card__button" @click="statusChange('wrong')">
+        <button class="card__button" @click="statusChange('fail')">
           <WrongIcon />
         </button>
-        <button class="card__button" @click="statusChange('correct')">
+        <button class="card__button" @click="statusChange('success')">
           <CorrectIcon />
         </button>
       </div>
@@ -118,5 +151,16 @@ const statusChange = (status) => {
   border: none;
   background-color: transparent;
   cursor: pointer;
+}
+
+.card__button svg {
+  width: 24px;
+}
+
+.wr-ico {
+  width: 48px;
+  position: absolute;
+  top: -24px;
+  background-color: var(--color-bg-card);
 }
 </style>
