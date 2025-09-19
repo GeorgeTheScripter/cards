@@ -3,23 +3,10 @@ import Button from "./components/Button.vue";
 import Card from "./components/Card.vue";
 import Header from "./components/Header.vue";
 import { ref, onBeforeMount } from "vue";
+import { useFetchCards } from "./composables/api";
 
 const score = ref(0);
-const cards = ref([]);
-
-const fetchCards = async () => {
-  try {
-    const response = await fetch("http://localhost:8080/api/random-words");
-    const data = await response.json();
-    cards.value = data.map((card) => ({
-      ...card,
-      state: "closed",
-      status: "pending",
-    }));
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+const { cards, fetchCards } = useFetchCards();
 
 onBeforeMount(() => {
   fetchCards();
@@ -50,7 +37,7 @@ const statusChange = (cardWord, status) => {
       <Card
         v-for="(card, i) in cards"
         :key="card.word"
-        :cardNumber="`${cards.length < 10 ? '0' : ''}${i + 1}`"
+        :cardNumber="`${i + 1 < 10 ? '0' + (i + 1) : '' + (i + 1)}`"
         :word="card.word"
         :translate="card.translation"
         :status="card.status"
