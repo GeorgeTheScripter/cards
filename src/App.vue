@@ -2,47 +2,41 @@
 import Button from "./components/Button.vue";
 import Card from "./components/Card.vue";
 import Header from "./components/Header.vue";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 
 const score = ref(0);
+const cards = ref([]);
 
-const cards = ref([
-  {
-    id: 1,
-    word: "Hello",
-    translation: "Привет",
-    state: "closed",
-    status: "pending",
-  },
-  {
-    id: 2,
-    word: "Bye",
-    translation: "Пока",
-    state: "closed",
-    status: "pending",
-  },
-  {
-    id: 3,
-    word: "Bear",
-    translation: "Медведь",
-    state: "closed",
-    status: "pending",
-  },
-]);
+const fetchCards = async () => {
+  try {
+    const response = await fetch("http://localhost:8080/api/random-words");
+    const data = await response.json();
+    cards.value = data.map((card) => ({
+      ...card,
+      state: "closed",
+      status: "pending",
+    }));
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
-const openCard = (cardId) => {
-  const card = cards.value.find((card) => card.id === cardId);
+onBeforeMount(() => {
+  fetchCards();
+});
+
+const openCard = (cardWord) => {
+  const card = cards.value.find((card) => card.word === cardWord);
 
   if (card) {
     card.state = card.state === "closed" ? "opened" : "closed";
   }
 };
 
-const statusChange = (cardId, status) => {
-  const card = cards.value.find((card) => card.id === cardId);
+const statusChange = (cardWord, status) => {
+  const card = cards.value.find((card) => card.word === cardWord);
 
   if (card) {
-    console.log(status);
     card.status = status;
   }
 };
@@ -55,8 +49,7 @@ const statusChange = (cardId, status) => {
     <div class="card__list">
       <Card
         v-for="(card, i) in cards"
-        :key="card.id"
-        :id="card.id"
+        :key="card.word"
         :cardNumber="`${cards.length < 10 ? '0' : ''}${i + 1}`"
         :word="card.word"
         :translate="card.translation"
@@ -79,7 +72,9 @@ const statusChange = (cardId, status) => {
 }
 
 .card__list {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 120px;
+  gap: 24px;
 }
 </style>
