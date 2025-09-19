@@ -2,47 +2,28 @@
 import Button from "./components/Button.vue";
 import Card from "./components/Card.vue";
 import Header from "./components/Header.vue";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
+import { useFetchCards } from "./composables/api";
 
 const score = ref(0);
+const { cards, fetchCards } = useFetchCards();
 
-const cards = ref([
-  {
-    id: 1,
-    word: "Hello",
-    translation: "Привет",
-    state: "closed",
-    status: "pending",
-  },
-  {
-    id: 2,
-    word: "Bye",
-    translation: "Пока",
-    state: "closed",
-    status: "pending",
-  },
-  {
-    id: 3,
-    word: "Bear",
-    translation: "Медведь",
-    state: "closed",
-    status: "pending",
-  },
-]);
+onBeforeMount(() => {
+  fetchCards();
+});
 
-const openCard = (cardId) => {
-  const card = cards.value.find((card) => card.id === cardId);
+const openCard = (cardWord) => {
+  const card = cards.value.find((card) => card.word === cardWord);
 
   if (card) {
     card.state = card.state === "closed" ? "opened" : "closed";
   }
 };
 
-const statusChange = (cardId, status) => {
-  const card = cards.value.find((card) => card.id === cardId);
+const statusChange = (cardWord, status) => {
+  const card = cards.value.find((card) => card.word === cardWord);
 
   if (card) {
-    console.log(status);
     card.status = status;
   }
 };
@@ -55,9 +36,8 @@ const statusChange = (cardId, status) => {
     <div class="card__list">
       <Card
         v-for="(card, i) in cards"
-        :key="card.id"
-        :id="card.id"
-        :cardNumber="`${cards.length < 10 ? '0' : ''}${i + 1}`"
+        :key="card.word"
+        :cardNumber="`${i + 1 < 10 ? '0' + (i + 1) : '' + (i + 1)}`"
         :word="card.word"
         :translate="card.translation"
         :status="card.status"
@@ -79,7 +59,9 @@ const statusChange = (cardId, status) => {
 }
 
 .card__list {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-top: 120px;
+  gap: 24px;
 }
 </style>

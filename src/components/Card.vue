@@ -5,7 +5,6 @@ import CorrectIcon from "./icons/CorrectIcon.vue";
 
 const props = defineProps({
   cardNumber: String,
-  id: Number,
   word: String,
   translate: String,
   status: "success" | "fail" | "pending",
@@ -20,11 +19,11 @@ const cardWord = computed(() => {
 
 const flipCard = () => {
   console.log("flip");
-  emit("flip", props.id);
+  emit("flip", props.word);
 };
 
 const statusChange = (status) => {
-  emit("changeStatus", props.id, status);
+  emit("changeStatus", props.word, status);
 };
 
 const isFlipped = computed(() => {
@@ -112,6 +111,10 @@ const completedText = computed(() => {
   letter-spacing: 0%;
   text-align: center;
   padding: 0 2px;
+}
+
+.card__word {
+  text-align: center;
 }
 
 .card__action {
