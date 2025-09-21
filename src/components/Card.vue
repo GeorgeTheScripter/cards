@@ -26,7 +26,7 @@ const flipCard = () => {
 
 const statusChange = (status) => {
   if (status === "fail") {
-    score.value -= 10;
+    score.value -= 4;
   } else if (status === "success") {
     score.value += 10;
   }
