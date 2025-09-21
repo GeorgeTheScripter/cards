@@ -1,7 +1,8 @@
 <script setup>
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import WrongIcon from "./icons/WrongIcon.vue";
 import CorrectIcon from "./icons/CorrectIcon.vue";
+import { scoreProvide } from "../constants";
 
 const props = defineProps({
   cardNumber: String,
@@ -13,16 +14,22 @@ const props = defineProps({
 
 const emit = defineEmits(["flip", "changeStatus"]);
 
+const score = inject(scoreProvide);
+
 const cardWord = computed(() => {
   return props.state === "opened" ? props.translate : props.word;
 });
 
 const flipCard = () => {
-  console.log("flip");
   emit("flip", props.word);
 };
 
 const statusChange = (status) => {
+  if (status === "fail") {
+    score.value -= 10;
+  } else if (status === "success") {
+    score.value += 10;
+  }
   emit("changeStatus", props.word, status);
 };
 
