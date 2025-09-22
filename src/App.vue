@@ -2,15 +2,14 @@
 import Button from "./components/Button.vue";
 import Card from "./components/Card.vue";
 import Header from "./components/Header.vue";
-import { ref, onBeforeMount } from "vue";
-import { useFetchCards } from "./composables/api";
+import { ref, provide } from "vue";
+import { useFetchCards } from "./composables/useFetchCards";
+import { scoreProvide } from "./constants";
 
 const score = ref(0);
 const { cards, fetchCards } = useFetchCards();
 
-onBeforeMount(() => {
-  fetchCards();
-});
+provide(scoreProvide, score);
 
 const openCard = (cardWord) => {
   const card = cards.value.find((card) => card.word === cardWord);
@@ -27,13 +26,18 @@ const statusChange = (cardWord, status) => {
     card.status = status;
   }
 };
+
+const beginingAgain = () => {
+  fetchCards();
+  score.value = 0;
+};
 </script>
 
 <template>
   <main class="card-field">
     <Header :score="score" />
 
-    <div class="card__list">
+    <div v-show="cards.length > 0" class="card__list">
       <Card
         v-for="(card, i) in cards"
         :key="card.word"
@@ -47,7 +51,13 @@ const statusChange = (cardWord, status) => {
       />
     </div>
 
-    <Button>Начать игру</Button>
+    <Button v-if="cards.length < 1" @click="fetchCards()">Начать игру</Button>
+    <Button
+      v-else-if="cards.length > 0"
+      @click="beginingAgain"
+      class="refresh__btn"
+      >Начать заново</Button
+    >
   </main>
 </template>
 
@@ -60,8 +70,12 @@ const statusChange = (cardWord, status) => {
 
 .card__list {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   margin-top: 120px;
   gap: 24px;
+}
+
+.refresh__btn {
+  margin-top: 100px;
 }
 </style>

@@ -1,14 +1,14 @@
 <script setup>
+import { scoreProvide } from "../constants";
 import HeartIcon from "./icons/HeartIcon.vue";
+import { inject } from "vue";
 
-const props = defineProps({
-  score: Number,
-});
+const score = inject(scoreProvide);
 </script>
 
 <template>
   <div class="score">
-    <p class="score__count">{{ props.score }}</p>
+    <p class="score__count">{{ score }}</p>
 
     <HeartIcon />
   </div>
